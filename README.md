@@ -81,6 +81,7 @@ Inter-service communication is handled via **Spring Cloud OpenFeign** (e.g., the
 | Code generation | Lombok, MapStruct |
 | Containerization | Docker, Docker Compose |
 | Build | Apache Maven |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS, Axios, React Router, Lucide Icons |
 
 ---
 
@@ -166,7 +167,8 @@ Three isolated **PostgreSQL** schemas share one database instance per service:
 ### Prerequisites
 
 - [Docker](https://www.docker.com/) & Docker Compose
-- [Java 21](https://adoptium.net/) (for local development)
+- [Node.js 20+](https://nodejs.org/) & npm (for the frontend SPA)
+- [Java 21](https://adoptium.net/) (for local backend development)
 - [Maven](https://maven.apache.org/) (or use the included `mvnw` wrapper)
 - An [OpenAI API key](https://platform.openai.com/) for the AI service
 - Google OAuth2 credentials (Client ID & Secret) for the secured gateway
@@ -192,6 +194,9 @@ Three isolated **PostgreSQL** schemas share one database instance per service:
    AI_API_KEY=your_openai_api_key_here
    AI_MODEL=gpt-4o-mini
 
+   # Use dev to run microservices without Google OAuth2 locally (pairs with :8073)
+   SPRING_PROFILES_ACTIVE=dev
+
    GOOGLE_CLIENT_ID=your_google_client_id
    GOOGLE_CLIENT_SECRET=your_google_client_secret
    ```
@@ -206,6 +211,7 @@ Three isolated **PostgreSQL** schemas share one database instance per service:
 
    | Service | URL |
    |---|---|
+   | Frontend (Vite) | http://localhost:5173 |
    | Eureka Dashboard | http://localhost:8070 |
    | API Gateway (secured) | http://localhost:8072 |
    | API Gateway (open/dev) | http://localhost:8073 |
@@ -213,6 +219,22 @@ Three isolated **PostgreSQL** schemas share one database instance per service:
    | Account Service Swagger | http://localhost:8081/swagger-ui.html |
    | Transaction Service Swagger | http://localhost:8082/swagger-ui.html |
    | AI Service Swagger | http://localhost:8080/swagger-ui.html |
+
+### Frontend (`frontend/`)
+
+1. Configure the frontend environment:
+   ```bash
+   cd frontend
+   cp .env.example .env
+   ```
+   Set `VITE_API_BASE_URL` in `frontend/.env` (`http://localhost:8073` for the open/dev gateway, or `http://localhost:8072` for the secured gateway).
+
+2. Install dependencies and start the dev server:
+   ```bash
+   npm install
+   npm run dev
+   ```
+   The SPA runs at `http://localhost:5173`. See [frontend/README.md](frontend/README.md) for more details.
 
 ### Development (Hot Reload)
 
@@ -244,7 +266,8 @@ cd gatewayserver && mvn spring-boot:run
 
 ## 🔐 Security
 
-- **Authentication:** Google OAuth2 login via the secured gateway; issues JWT tokens for downstream services
+- **Authentication:** Google OAuth2 login via the secured gateway (`:8072`); `POST /api/v1/accounts` registration and `/login` are public
+- **Local Dev Mode:** Setting `SPRING_PROFILES_ACTIVE=dev` activates `DevSecurityConfig` on the microservices and pairs with `gatewayserver-open` (`:8073`) for local testing without Google OAuth2
 - **Authorization:** JWT validated on each microservice using Spring Security OAuth2 Resource Server
 - **Role-based access:** `ADMIN`, `USER`, `VIP`, `INACTIVE` — enforced with `@PreAuthorize` annotations
 - **Data isolation:** Users can only access their own data; admins have full access
@@ -256,6 +279,7 @@ cd gatewayserver && mvn spring-boot:run
 
 ```
 Proiect_TW/
+├── frontend/                # React 19 + TypeScript + Tailwind CSS SPA
 ├── eurekaserver/            # Netflix Eureka service registry
 ├── gatewayserver/           # Spring Cloud Gateway (routing + OAuth2)
 ├── microservice-account/    # User account management
