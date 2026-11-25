@@ -83,7 +83,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://accountsdb:5432/finance_app_db?currentSchema=account_schema
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     depends_on:
@@ -108,7 +108,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://transactionsdb:5432/finance_app_db?currentSchema=transaction_schema
       - TRANSACTION_DB_USERNAME=${POSTGRES_USER}
       - TRANSACTION_DB_PASSWORD=${POSTGRES_PASSWORD}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     depends_on:
@@ -132,7 +132,7 @@ services:
       - TRANSACTION_DB_URL=jdbc:postgresql://transactionsdb:5432/finance_app_db?currentSchema=transaction_schema
       - TRANSACTION_DB_USERNAME=${POSTGRES_USER}
       - TRANSACTION_DB_PASSWORD=${POSTGRES_PASSWORD}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     depends_on:
@@ -158,7 +158,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://aidb:5432/finance_app_db?currentSchema=ai_schema
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
       - AI_API_KEY=${AI_API_KEY}
